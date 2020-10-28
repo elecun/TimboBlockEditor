@@ -19,50 +19,50 @@ var Code = {};
  * Lookup for names of supported languages.  Keys should be in ISO 639 format.
  */
 Code.LANGUAGE_NAME = {
-  'ar': '碼�晩邈磨�馬',
-  'be-tarask': 'Tara큄kievica',
+  'ar': 'العربية',
+  'be-tarask': 'Taraškievica',
   'br': 'Brezhoneg',
-  'ca': 'Catal횪',
-  'cs': '훻esky',
+  'ca': 'Català',
+  'cs': 'Česky',
   'da': 'Dansk',
   'de': 'Deutsch',
-  'el': '�貫貫管館菅觀郭',
+  'el': 'Ελληνικά',
   'en': 'English',
-  'es': 'Espa챰ol',
+  'es': 'Español',
   'et': 'Eesti',
-  'fa': '�碼邈卍�',
-  'fr': 'Fran챌ais',
-  'he': '鬧�淚�瘻',
+  'fa': 'فارسی',
+  'fr': 'Français',
+  'he': 'עברית',
   'hrx': 'Hunsrik',
   'hu': 'Magyar',
   'ia': 'Interlingua',
-  'is': '횒slenska',
+  'is': 'Íslenska',
   'it': 'Italiano',
-  'ja': '�ζ쑍沃�',
+  'ja': '日本語',
   'kab': 'Kabyle',
-  'ko': '�쒓뎅��',
-  'mk': '�逵克筠畇棘戟�克龜',
+  'ko': '한국어',
+  'mk': 'Македонски',
   'ms': 'Bahasa Melayu',
-  'nb': 'Norsk Bokm책l',
+  'nb': 'Norsk Bokmål',
   'nl': 'Nederlands, Vlaams',
-  'oc': 'Lenga d\'챵c',
+  'oc': 'Lenga d\'òc',
   'pl': 'Polski',
-  'pms': 'Piemont챔is',
-  'pt-br': 'Portugu챗s Brasileiro',
-  'ro': 'Rom창n훱',
-  'ru': '����克龜橘',
+  'pms': 'Piemontèis',
+  'pt-br': 'Português Brasileiro',
+  'ro': 'Română',
+  'ru': 'Русский',
   'sc': 'Sardu',
-  'sk': 'Sloven훾ina',
-  'sr': '鬼�極�克龜',
+  'sk': 'Slovenčina',
+  'sr': 'Српски',
   'sv': 'Svenska',
-  'ta': '昔ㅰ�昔욈�晳�',
-  'th': '錫졷림錫⒯림仙꾝툠錫�',
+  'ta': 'தமிழ்',
+  'th': 'ภาษาไทย',
   'tlh': 'tlhIngan Hol',
-  'tr': 'T체rk챌e',
-  'uk': '叫克�逵�戟��克逵',
-  'vi': 'Ti梳퓆g Vi沼뇍',
-  'zh-hans': '嶸�鵝볞릎��',
-  'zh-hant': '閭ｉ쳱訝�뻼'
+  'tr': 'Türkçe',
+  'uk': 'Українська',
+  'vi': 'Tiếng Việt',
+  'zh-hans': '简体中文',
+  'zh-hant': '正體中文'
 };
 
 /**
@@ -96,7 +96,7 @@ Code.getLang = function() {
   var lang = Code.getStringParamFromUrl('lang', '');
   if (Code.LANGUAGE_NAME[lang] === undefined) {
     // Default to English.
-    lang = 'en';
+    lang = 'ko';
   }
   return lang;
 };
@@ -260,7 +260,7 @@ Code.tabClick = function(clickedName) {
       xmlDom = Blockly.Xml.textToDom(xmlText);
     } catch (e) {
       var q =
-          window.confirm(Blockly.Msg['badXml'].replace('%1', e));
+          window.confirm(MSG['badXml'].replace('%1', e));
       if (!q) {
         // Leave the user on the XML tab.
         return;
@@ -418,16 +418,16 @@ Code.init = function() {
   // into `Blockly.Msg`.
   // TODO: Clean up the message files so this is done explicitly instead of
   // through this for-loop.
-  for (var messageKey in Blockly.Msg) {
+  for (var messageKey in MSG) {
     if (messageKey.indexOf('cat') == 0) {
-      Blockly.Msg[messageKey.toUpperCase()] = Blockly.Msg[messageKey];
+      Blockly.Msg[messageKey.toUpperCase()] = MSG[messageKey];
     }
   }
 
   // Construct the toolbox XML, replacing translated variable names.
   var toolboxText = document.getElementById('toolbox').outerHTML;
   toolboxText = toolboxText.replace(/(^|[^%]){(\w+)}/g,
-      function(m, p1, p2) {return p1 + Blockly.Msg[p2];});
+      function(m, p1, p2) {return p1 + MSG[p2];});
   var toolboxXml = Blockly.Xml.textToDom(toolboxText);
 
   Code.workspace = Blockly.inject('content_blocks',
@@ -436,7 +436,7 @@ Code.init = function() {
            length: 3,
            colour: '#ccc',
            snap: true},
-       media: 'blockly/media/',
+       media: '../../media/',
        rtl: rtl,
        toolbox: toolboxXml,
        zoom:
@@ -463,10 +463,10 @@ Code.init = function() {
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
   if ('BlocklyStorage' in window) {
-    BlocklyStorage['HTTPREQUEST_ERROR'] = Blockly.Msg['httpRequestError'];
-    BlocklyStorage['LINK_ALERT'] = Blockly.Msg['linkAlert'];
-    BlocklyStorage['HASH_ERROR'] = Blockly.Msg['hashError'];
-    BlocklyStorage['XML_ERROR'] = Blockly.Msg['xmlError'];
+    BlocklyStorage['HTTPREQUEST_ERROR'] = MSG['httpRequestError'];
+    BlocklyStorage['LINK_ALERT'] = MSG['linkAlert'];
+    BlocklyStorage['HASH_ERROR'] = MSG['hashError'];
+    BlocklyStorage['XML_ERROR'] = MSG['xmlError'];
     Code.bindClick(linkButton,
         function() {BlocklyStorage.link(Code.workspace);});
   } else if (linkButton) {
@@ -508,7 +508,7 @@ Code.initLanguage = function() {
     languages.push([Code.LANGUAGE_NAME[lang], lang]);
   }
   var comp = function(a, b) {
-    // Sort based on first argument ('English', '����克龜橘', '嶸�鵝볟춻', etc).
+    // Sort based on first argument ('English', 'Русский', '简体字', etc).
     if (a[0] > b[0]) return 1;
     if (a[0] < b[0]) return -1;
     return 0;
@@ -537,13 +537,13 @@ Code.initLanguage = function() {
   codeMenu.addEventListener('change', Code.changeCodingLanguage);
 
   // Inject language strings.
-  document.title += ' ' + Blockly.Msg['title'];
-  document.getElementById('title').textContent = Blockly.Msg['title'];
-  document.getElementById('tab_blocks').textContent = Blockly.Msg['blocks'];
+  document.title += ' ' + MSG['title'];
+  document.getElementById('title').textContent = MSG['title'];
+  document.getElementById('tab_blocks').textContent = MSG['blocks'];
 
-  document.getElementById('linkButton').title = Blockly.Msg['linkTooltip'];
-  document.getElementById('runButton').title = Blockly.Msg['runTooltip'];
-  document.getElementById('trashButton').title = Blockly.Msg['trashTooltip'];
+  document.getElementById('linkButton').title = MSG['linkTooltip'];
+  document.getElementById('runButton').title = MSG['runTooltip'];
+  document.getElementById('trashButton').title = MSG['trashTooltip'];
 };
 
 /**
@@ -555,7 +555,7 @@ Code.runJS = function() {
   var timeouts = 0;
   var checkTimeout = function() {
     if (timeouts++ > 1000000) {
-      throw Blockly.Msg['timeout'];
+      throw MSG['timeout'];
     }
   };
   var code = Blockly.JavaScript.workspaceToCode(Code.workspace);
@@ -563,7 +563,7 @@ Code.runJS = function() {
   try {
     eval(code);
   } catch (e) {
-    alert(Blockly.Msg['badCode'].replace('%1', e));
+    alert(MSG['badCode'].replace('%1', e));
   }
 };
 
@@ -584,6 +584,6 @@ Code.discard = function() {
 // Load the Code demo's language strings.
 document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
-document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
+//document.write('<script src="../../msg/js/' + Code.LANG + '.js"></script>\n');
 
 window.addEventListener('load', Code.init);
