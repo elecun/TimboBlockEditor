@@ -5,19 +5,430 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google" value="notranslate">
-  <title>Blockly Demo:</title>
+  <title>Timbo Block Editor</title>
   <link rel="stylesheet" href="style.css">
+
+  <script src="js/jquery-3.5.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
   <script src="storage.js"></script>
   <script src="blockly/blockly_compressed.js"></script>
   <script src="blockly/blocks_compressed.js"></script>
   <script src="blockly/javascript_compressed.js"></script>
   <script src="blockly/python_compressed.js"></script>
-  <script src="blockly/php_compressed.js"></script>
-  <script src="blockly/lua_compressed.js"></script>
-  <script src="blockly/dart_compressed.js"></script>
   <script src="code.js"></script>
+  <script src="js/ko.js"></script>
+
+  <style>
+        html, body {
+            height: 100%;
+        }
+        .color-text-timbo {
+            color: #6dcff6;
+        }
+
+        .color-bg-timbo{
+            background-color: #6dcff6;
+        }
+
+        /* generated codes view */
+        .codearea { 
+            padding: 5px;
+            border-style: none;
+            resize:none;
+            width: 100%;
+            height: 100%;
+            background-color: #eee;
+            }
+
+        input:focus, textarea:focus {
+            outline: none; 
+        }
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            position: relative;
+            min-width: 100px;
+            min-height: 0px;
+        }
+
+    </style>
+
 </head>
 <body>
+  <!-- for timbo -->
+  <!-- file export modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">블록 저장</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">저장할 파일명:</label>
+                            <input type="text" class="form-control" id="exportfilename" placeholder="export.xml">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <a href="#" class="btn btn-primary" id="export_xml" download="export.xml">저장하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- for timbo -->
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <!-- main contents -->
+        <main role="main" style="height: 100%;">
+            <div class="row" style="height:inherit;">
+                
+                <!-- left side -->
+                <div class="col-sm-12 color-bg-timbo">
+                    <div class="row" style="height: 100%;">
+                        <div id="blocklyDiv" style="position:fixed;"></div>
+                        <div id="blocklyArea" style="width: 100%;"></div>
+                    </div>
+                    <div style="position: absolute; right: 29px; bottom: 270px;">
+                        <input type="file" name="import_xml" id="import_xml" accept=".xml" class="inputfile" style="display:none;">
+                        <label for="import_xml"><i class="fas fa-3x fa-folder-open" style="color:#120087;cursor: pointer;"></i></label>
+                    </div>
+                    <div style="position: absolute; right: 37px; bottom: 200px;">
+                        <a href="#" data-toggle="modal" data-target="#exportModal"><i class="fas fa-3x fa-save" style="color:#120087;"></i></a>
+                    </div>
+                    <div id="blockly_play" style="position: absolute; right: 35px; bottom: 120px;">
+                        <a href="#" id="code_play"><i class="far fa-3x fa-play-circle" style="color:#120087;"></i></a>
+                    </div>
+                    <div id="blockly_stop" style="position: absolute; right: 35px; bottom: 120px;">
+                        <a href="#" id="code_stop"><i class="far fa-3x fa-stop-circle" style="color:#d30000;"></i></a>
+                    </div>
+                </div>
+                <div id="codearea" w3-include-html="codearea.html"></div>
+            </div>
+        </main>
+    </div>
+
+    <xml id="toolbox" style="display: none">
+        
+        <category name="논리" colour="110">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+            <block type="logic_null"></block>
+            <block type="logic_ternary"></block>
+        </category>
+        
+        <category name="반복" colour="150">
+            <block type="controls_repeat_ext">
+                <value name="TIMES">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for">
+                <value name="FROM">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="TO">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+                <value name="BY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="controls_forEach"></block>
+            <block type="controls_flow_statements"></block>
+        </category>
+        
+        <category name="수학" colour="230">
+            <block type="math_number">
+                <field name="NUM">123</field>
+            </block>
+            <block type="math_arithmetic">
+                <value name="A">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+            <value name="B">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            </block>
+            <block type="math_single">
+            <value name="NUM">
+              <shadow type="math_number">
+                <field name="NUM">9</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_trig">
+            <value name="NUM">
+              <shadow type="math_number">
+                <field name="NUM">45</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_constant"></block>
+            <block type="math_number_property">
+            <value name="NUMBER_TO_CHECK">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_round">
+            <value name="NUM">
+              <shadow type="math_number">
+                <field name="NUM">3.1</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_on_list"></block>
+            <block type="math_modulo">
+            <value name="DIVIDEND">
+              <shadow type="math_number">
+                <field name="NUM">64</field>
+              </shadow>
+            </value>
+            <value name="DIVISOR">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_constrain">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">50</field>
+              </shadow>
+            </value>
+            <value name="LOW">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="HIGH">
+              <shadow type="math_number">
+                <field name="NUM">100</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_random_int">
+            <value name="FROM">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="TO">
+              <shadow type="math_number">
+                <field name="NUM">100</field>
+              </shadow>
+            </value>
+            </block>
+            <block type="math_random_float"></block>
+            <block type="math_atan2">
+            <value name="X">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="Y">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            </block>
+        </category>
+        <category name="색" colour="20">
+            <block type="colour_picker"></block>
+              <block type="colour_random"></block>
+              <block type="colour_rgb">
+                <value name="RED">
+                  <shadow type="math_number">
+                    <field name="NUM">100</field>
+                  </shadow>
+                </value>
+                <value name="GREEN">
+                  <shadow type="math_number">
+                    <field name="NUM">50</field>
+                  </shadow>
+                </value>
+                <value name="BLUE">
+                  <shadow type="math_number">
+                    <field name="NUM">0</field>
+                  </shadow>
+                </value>
+              </block>
+              <block type="colour_blend">
+                <value name="COLOUR1">
+                  <shadow type="colour_picker">
+                    <field name="COLOUR">#ff0000</field>
+                  </shadow>
+                </value>
+                <value name="COLOUR2">
+                  <shadow type="colour_picker">
+                    <field name="COLOUR">#3333ff</field>
+                  </shadow>
+                </value>
+                <value name="RATIO">
+                  <shadow type="math_number">
+                    <field name="NUM">0.5</field>
+                  </shadow>
+                </value>
+              </block>
+        </category>
+        <category name="변수" colour="330" custom="VARIABLE">
+        </category>
+        <category name="기능" colour="290" custom="PROCEDURE">
+        </category>
+        <sep></sep>
+        <sep></sep>
+        
+        <!-- timbo blocks -->
+        <!--
+        <category name="센서" colour="230">
+            <block type="mic_set" colour="230"></block>
+            <block type="illumi_set" colour="230"></block>
+            <block type="distance_set" colour="230"></block>
+        </category>
+        -->
+        <!--
+        <category name="동작" colour="50">
+            <category name="모션" colour="50">
+                <block type="motion_play" colour="50"></block>
+                <block type="motion_stop" colour="50"></block>
+            </category>
+            <category name="퀸" colour="50">
+                <block type="queen_motion_play" colour="50"></block>
+                <block type="queen_motion_stop" colour="50"></block>
+            </category>
+            <category name="빛" colour="300">
+                <block type="light_set" colour="300"></block>
+                <block type="light_var_set" colour="300"></block>
+                <block type="light_control" colour="300"></block>
+            </category>
+            <category name="색" colour="330">
+                <block type="rgb_set" colour="330"></block>
+                <block type="rgb_pick" colour="330"></block>
+                <block type="rgb_control" colour="330"></block>
+            </category>
+            <category name="소리" colour="340">
+                <block type="buzzer_set" colour="340"></block>
+                <block type="buzzer_var_set" colour="340"></block>
+                <block type="buzzer_control" colour="340"></block>
+            </category>
+            <category name="회전" colour="350">
+                <block type="motor_dir_set" colour="350"></block>
+                <block type="motor_dir_control" colour="350"></block>
+                <block type="motor_rotate_set" colour="350"></block>
+                <block type="motor_rotate_var_set" colour="350"></block>
+            </category>
+        </category>
+-->
+        <category name="기타" colour="200">
+            <block type="sleep" colour="200"></block>
+            <block type="block_motor_dir" colour="200"></block>
+            <block type="block_trj_filein" colour="100"></block>
+        </category>
+        
+        <category name="데이터" colour="20">
+        </category>
+
+        <category name="연결블럭" colour="50">
+        </category>
+    </xml>
+
+     <script>
+        var blocklyArea = document.getElementById('blocklyArea');
+        var blocklyDiv = document.getElementById('blocklyDiv');
+        var workspace = Blockly.inject(blocklyDiv,{toolbox: document.getElementById('toolbox')});
+        var onresize = function(e) {
+            // Compute the absolute coordinates and dimensions of blocklyArea.
+            var element = blocklyArea;
+            var x = 0;
+            var y = 0;
+            do {
+              x += element.offsetLeft;
+              y += element.offsetTop;
+              element = element.offsetParent;
+            } while (element);
+            // Position blocklyDiv over blocklyArea.
+            blocklyDiv.style.left = x + 'px';
+            blocklyDiv.style.top = y + 'px';
+            blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+            blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+            Blockly.svgResize(workspace);
+        };
+        
+        window.addEventListener('resize', onresize, false);
+        onresize();
+        Blockly.svgResize(workspace);
+        
+        function showCode() {
+            // Generate JavaScript code and display it.
+            //Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+            var code = Blockly.Python.workspaceToCode(workspace);
+            var codearea = document.getElementById('content_python');
+            codearea.value = code;
+        }
+        
+        workspace.addChangeListener(showCode);
+        
+        
+        $("input#import_xml").change(function(){
+            
+            if(this.files && this.files[0]){
+                var reader = new FileReader();
+                reader.onload = function(e){
+                    workspace.clear();
+                    var xml_text = reader.result.toString();
+                    var xml = Blockly.Xml.textToDom(xml_text);
+                    Blockly.Xml.domToWorkspace(xml, workspace);
+                }
+                reader.readAsText(this.files[0]);
+            }
+        });
+        
+        
+        $("a#export_xml").click(function(){
+            var filename = $("#exportfilename").val();
+            $(this).attr('download', filename);
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml_text = Blockly.Xml.domToPrettyText(xml);
+            this.href = "data:text/plain;charset=UTF-8,"  + encodeURIComponent(xml_text);
+        });
+        
+        $("a#code_play").click(function(){
+            var code = Blockly.Python.workspaceToCode(workspace);
+            play(code);
+        });
+        
+        $("a#code_stop").click(function(){
+            stop();
+        });
+        
+        
+</script>
+  
+  <!--
   <table width="100%" height="100%">
     <tr>
       <td>
@@ -389,6 +800,6 @@
     <category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
     <category name="%{BKY_CATFUNCTIONS}" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
   </xml>
-
+-->
 </body>
 </html>
