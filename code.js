@@ -94,6 +94,7 @@ Code.getStringParamFromUrl = function(name, defaultValue) {
  */
 Code.getLang = function() {
   var lang = Code.getStringParamFromUrl('lang', '');
+  console.log(lang);
   if (Code.LANGUAGE_NAME[lang] === undefined) {
     // Default to English.
     lang = 'ko';
@@ -228,7 +229,7 @@ Code.getBBox_ = function(element) {
  * User's language (e.g. "en").
  * @type {string}
  */
-Code.LANG = Code.getLang();
+Code.LANG = "ko";//Code.getLang();
 
 /**
  * List of tab names.
@@ -436,7 +437,7 @@ Code.init = function() {
            length: 3,
            colour: '#ccc',
            snap: true},
-       media: '../../media/',
+       media: './blockly/media/',
        rtl: rtl,
        toolbox: toolboxXml,
        zoom:
@@ -582,8 +583,8 @@ Code.discard = function() {
 };
 
 // Load the Code demo's language strings.
-document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
+//document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
-//document.write('<script src="../../msg/js/' + Code.LANG + '.js"></script>\n');
+document.write('<script src="./blockly/msg/js/ko.js"></script>\n');
 
 window.addEventListener('load', Code.init);
