@@ -94,7 +94,6 @@ Code.getStringParamFromUrl = function(name, defaultValue) {
  */
 Code.getLang = function() {
   var lang = Code.getStringParamFromUrl('lang', '');
-  console.log(lang);
   if (Code.LANGUAGE_NAME[lang] === undefined) {
     // Default to English.
     lang = 'ko';
@@ -229,20 +228,20 @@ Code.getBBox_ = function(element) {
  * User's language (e.g. "en").
  * @type {string}
  */
-Code.LANG = "ko";//Code.getLang();
+Code.LANG = Code.getLang();
 
 /**
  * List of tab names.
  * @private
  */
-Code.TABS_ = ['blocks', 'javascript', 'php', 'python', 'dart', 'lua', 'xml'];
+Code.TABS_ = ['blocks', 'python'];
 
 /**
  * List of tab names with casing, for display in the UI.
  * @private
  */
 Code.TABS_DISPLAY_ = [
-  'Blocks', 'JavaScript', 'PHP', 'Python', 'Dart', 'Lua', 'XML',
+  'Blocks', 'Python',
 ];
 
 Code.selected = 'blocks';
@@ -253,7 +252,7 @@ Code.selected = 'blocks';
  */
 Code.tabClick = function(clickedName) {
   // If the XML tab was open, save and render the content.
-  if (document.getElementById('tab_xml').classList.contains('tabon')) {
+  /*if (document.getElementById('tab_xml').classList.contains('tabon')) {
     var xmlTextarea = document.getElementById('content_xml');
     var xmlText = xmlTextarea.value;
     var xmlDom = null;
@@ -271,7 +270,7 @@ Code.tabClick = function(clickedName) {
       Code.workspace.clear();
       Blockly.Xml.domToWorkspace(xmlDom, Code.workspace);
     }
-  }
+  }*/
 
   if (document.getElementById('tab_blocks').classList.contains('tabon')) {
     Code.workspace.setVisible(false);
@@ -516,7 +515,7 @@ Code.initLanguage = function() {
   };
   languages.sort(comp);
   // Populate the language selection menu.
-  var languageMenu = document.getElementById('languageMenu');
+  /*var languageMenu = document.getElementById('languageMenu');
   languageMenu.options.length = 0;
   for (var i = 0; i < languages.length; i++) {
     var tuple = languages[i];
@@ -527,7 +526,7 @@ Code.initLanguage = function() {
     }
     languageMenu.options.add(option);
   }
-  languageMenu.addEventListener('change', Code.changeLanguage, true);
+  languageMenu.addEventListener('change', Code.changeLanguage, true);*/
 
   // Populate the coding language selection menu.
   var codeMenu = document.getElementById('code_menu');
@@ -539,7 +538,7 @@ Code.initLanguage = function() {
 
   // Inject language strings.
   document.title += ' ' + MSG['title'];
-  document.getElementById('title').textContent = MSG['title'];
+  //document.getElementById('title').textContent = MSG['title'];
   document.getElementById('tab_blocks').textContent = MSG['blocks'];
 
   document.getElementById('linkButton').title = MSG['linkTooltip'];
@@ -583,8 +582,8 @@ Code.discard = function() {
 };
 
 // Load the Code demo's language strings.
-//document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
+document.write('<script src="msg/' + Code.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
-document.write('<script src="./blockly/msg/js/ko.js"></script>\n');
+document.write('<script src="blockly/msg/js/' + Code.LANG + '.js"></script>\n');
 
 window.addEventListener('load', Code.init);
